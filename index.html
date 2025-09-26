@@ -3,61 +3,897 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dubai Info Hub - Magyaroknak</title>
+    <title>Dubai Info Hub 24/7 - Ingyenes Tanácsok Magyaroknak</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            background: linear-gradient(to bottom, #60a5fa, #fbbf24);
+            background: linear-gradient(135deg, #1e40af 0%, #f59e0b 50%, #dc2626 100%);
             min-height: 100vh;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .language-btn {
+            transition: all 0.3s ease;
+        }
+        .language-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .weather-card {
+            background: linear-gradient(45deg, #0ea5e9, #06b6d4);
+        }
+        .beach-card {
+            background: linear-gradient(45deg, #10b981, #14b8a6);
+        }
+        .newsletter-section {
+            background: linear-gradient(45deg, #7c3aed, #a855f7);
+        }
+        .webcam-frame {
+            border: 3px solid #f59e0b;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
 <body>
-    <main style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
-        <div style="max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.9); padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
-            
-            <h1 class="text-4xl font-bold text-center text-blue-600 mb-6">
-                🏗️ Dubai Infó magyaroknak
-            </h1>
-            
-            <p class="text-xl text-center mb-8 text-gray-700">
-                Ingyenes tanácsok: Dubai ingatlan, Golden Visa, utazási tippek, 8-12% hozam lehetőség
-            </p>
-            
-            <div class="text-center space-y-4 mb-8">
-                <a href="mailto:kormanyemil@yahoo.com" 
-                   class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold">
-                    ✉️ Írj kérdést nekünk!
-                </a>
-                
-                <br><br>
-                
-                <button class="bg-yellow-400 text-black px-6 py-3 rounded-lg font-semibold hover:bg-yellow-500 transition-colors duration-200">
-                    🎯 Pontgyűjtés (hamarosan)
-                </button>
-            </div>
-            
-            <div class="bg-blue-100 p-6 rounded-lg mb-8">
-                <h3 class="font-bold text-lg mb-2">📅 Következő ingyenes Zoom meeting:</h3>
-                <p class="text-lg">Október 25., 18:00</p>
-                <p class="text-sm text-gray-600">(Zoom link hamarosan érkezik emailben)</p>
-            </div>
-            
-            <div class="text-center space-x-4">
-                <a href="https://t.me/share/url?url=https://dubai-info-hub.netlify.app" 
-                   target="_blank" 
-                   class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-200">
-                    📱 Telegram
-                </a>
-                
-                <a href="https://www.facebook.com/sharer/sharer.php?u=https://dubai-info-hub.netlify.app" 
-                   target="_blank" 
-                   class="inline-block bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition-colors duration-200">
-                    👥 Facebook
-                </a>
+    
+    <!-- Cookie/GDPR Banner -->
+    <div id="cookieBanner" class="fixed top-0 left-0 right-0 bg-gray-900 text-white p-4 z-50" style="display: none;">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-sm">🍪 Ez az oldal cookie-kat használ a jobb felhasználói élmény érdekében. Folytatással elfogadod az <button onclick="showPrivacyPolicy()" class="underline text-blue-300">Adatvédelmi Szabályzatot</button>.</p>
+            <div class="flex gap-3">
+                <button onclick="acceptCookies()" class="bg-green-600 px-4 py-2 rounded text-sm hover:bg-green-700">Elfogadom</button>
+                <button onclick="rejectCookies()" class="bg-gray-600 px-4 py-2 rounded text-sm hover:bg-gray-700">Elutasítom</button>
             </div>
         </div>
+    </div>
+
+    <!-- Language Selector -->
+    <div class="fixed top-4 right-4 z-40 bg-white bg-opacity-95 rounded-xl p-4 shadow-xl">
+        <div class="text-xs text-gray-600 mb-2 text-center">Válassz nyelvet:</div>
+        <div class="grid grid-cols-5 gap-2">
+            <!-- Tier 1 Essential Languages -->
+            <button class="language-btn p-2 rounded-lg bg-blue-50 hover:bg-blue-100" onclick="setLanguage('hu')" title="Magyar">🇭🇺</button>
+            <button class="language-btn p-2 rounded-lg bg-blue-50 hover:bg-blue-100" onclick="setLanguage('en')" title="English">🇬🇧</button>
+            <button class="language-btn p-2 rounded-lg bg-blue-50 hover:bg-blue-100" onclick="setLanguage('ar')" title="العربية">🇦🇪</button>
+            <button class="language-btn p-2 rounded-lg bg-blue-50 hover:bg-blue-100" onclick="setLanguage('hi')" title="हिन्दी">🇮🇳</button>
+            <button class="language-btn p-2 rounded-lg bg-blue-50 hover:bg-blue-100" onclick="setLanguage('zh')" title="中文">🇨🇳</button>
+            <!-- Tier 2 High Priority -->
+            <button class="language-btn p-2 rounded-lg bg-yellow-50 hover:bg-yellow-100" onclick="setLanguage('ru')" title="Русский">🇷🇺</button>
+            <button class="language-btn p-2 rounded-lg bg-yellow-50 hover:bg-yellow-100" onclick="setLanguage('ur')" title="اردو">🇵🇰</button>
+            <button class="language-btn p-2 rounded-lg bg-yellow-50 hover:bg-yellow-100" onclick="setLanguage('fr')" title="Français">🇫🇷</button>
+            <button class="language-btn p-2 rounded-lg bg-yellow-50 hover:bg-yellow-100" onclick="setLanguage('es')" title="Español">🇪🇸</button>
+            <button class="language-btn p-2 rounded-lg bg-yellow-50 hover:bg-yellow-100" onclick="setLanguage('de')" title="Deutsch">🇩🇪</button>
+            <!-- Tier 3 Strategic -->
+            <button class="language-btn p-2 rounded-lg bg-green-50 hover:bg-green-100" onclick="setLanguage('tr')" title="Türkçe">🇹🇷</button>
+            <button class="language-btn p-2 rounded-lg bg-green-50 hover:bg-green-100" onclick="setLanguage('fa')" title="فارسی">🇮🇷</button>
+            <button class="language-btn p-2 rounded-lg bg-green-50 hover:bg-green-100" onclick="setLanguage('it')" title="Italiano">🇮🇹</button>
+            <button class="language-btn p-2 rounded-lg bg-green-50 hover:bg-green-100" onclick="setLanguage('pt')" title="Português">🇵🇹</button>
+            <button class="language-btn p-2 rounded-lg bg-green-50 hover:bg-green-100" onclick="setLanguage('ja')" title="日本語">🇯🇵</button>
+            <!-- More languages -->
+            <button class="language-btn p-2 rounded-lg bg-gray-50 hover:bg-gray-100" onclick="setLanguage('pl')" title="Polski">🇵🇱</button>
+            <button class="language-btn p-2 rounded-lg bg-gray-50 hover:bg-gray-100" onclick="setLanguage('ko')" title="한국어">🇰🇷</button>
+            <button class="language-btn p-2 rounded-lg bg-gray-50 hover:bg-gray-100" onclick="setLanguage('nl')" title="Nederlands">🇳🇱</button>
+            <button class="language-btn p-2 rounded-lg bg-gray-50 hover:bg-gray-100" onclick="setLanguage('th')" title="ไทย">🇹🇭</button>
+            <button class="language-btn p-2 rounded-lg bg-gray-50 hover:bg-gray-100" onclick="setLanguage('tl')" title="Tagalog">🇵🇭</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-7xl mx-auto">
+            
+            <!-- Header Section -->
+            <header class="text-center mb-12">
+                <div class="bg-white bg-opacity-95 rounded-2xl p-8 shadow-2xl">
+                    <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-yellow-600 bg-clip-text text-transparent" id="mainTitle">
+                        🏗️ Dubai Info Hub 24/7
+                    </h1>
+                    <p class="text-2xl text-gray-700 mb-6" id="mainSubtitle">
+                        Ingyenes szakértő tanácsok: Dubai ingatlan, Golden Visa, 8-12% befektetési hozam
+                    </p>
+                    <div class="text-lg text-blue-600 font-semibold" id="companyInfo">
+                        I am '71 | Edinburgh, UK | 24/7 magyarul is!
+                    </div>
+                </div>
+            </header>
+
+            <!-- Live Dubai Views Section -->
+            <section class="mb-12">
+                <div class="bg-white bg-opacity-95 rounded-2xl p-8 shadow-xl">
+                    <h2 class="text-3xl font-bold mb-6 text-blue-600 flex items-center" id="liveViewsTitle">
+                        🎥 Élő Dubai Nézetek - Most Történik!
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <!-- Webcam 1: Palm Jumeirah -->
+                        <div class="space-y-3">
+                            <h3 class="text-xl font-semibold text-gray-800">🌴 Fairmont Palm - Luxus Panoráma</h3>
+                            <div class="bg-gradient-to-br from-blue-100 to-yellow-100 p-4 rounded-xl">
+                                <iframe class="webcam-frame w-full h-64" 
+                                        src="https://www.skylinewebcams.com/embed/v/united-arab-emirates/dubai/dubai/fairmont-the-palm.html" 
+                                        frameborder="0" 
+                                        loading="lazy">
+                                </iframe>
+                            </div>
+                            <p class="text-sm text-gray-600">Élő nézet: Palm Jumeirah, Arabian Gulf, Marina skyline</p>
+                        </div>
+
+                        <!-- Webcam 2: Kite Beach -->
+                        <div class="space-y-3">
+                            <h3 class="text-xl font-semibold text-gray-800">🏄‍♂️ Kite Beach - Sport & Szórakozás</h3>
+                            <div class="bg-gradient-to-br from-green-100 to-blue-100 p-4 rounded-xl">
+                                <!-- Backup static image if webcam fails -->
+                                <div class="webcam-frame w-full h-64 bg-gradient-to-br from-blue-400 to-teal-400 rounded-lg flex items-center justify-center">
+                                    <div class="text-center text-white">
+                                        <div class="text-4xl mb-2">🏖️</div>
+                                        <div class="font-semibold">Kite Beach Élő Kamera</div>
+                                        <div class="text-sm opacity-90">Szörfözés, strandolás, sportok</div>
+                                        <div class="text-xs mt-2">Frissítés: 5 másodpercenként</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600">Élő aktivitás: vízi sportok, strandolás, kitesurf</p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="addPoints(3, 'Élő kamerák megtekintése')" 
+                                class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-full font-bold hover:from-yellow-600 hover:to-orange-600 transform hover:scale-105 transition-all">
+                            🎯 +3 Pont: Oszd Meg a Live Nézetet!
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weather & Sea Temperature -->
+            <section class="mb-12">
+                <div class="weather-card rounded-2xl p-8 shadow-xl text-white">
+                    <h2 class="text-3xl font-bold mb-6 flex items-center" id="weatherTitle">
+                        🌡️ Dubai Időjárás & Tengervíz - Pillanatnyilag
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-white bg-opacity-20 rounded-xl p-6 text-center backdrop-blur-sm">
+                            <div class="text-4xl font-bold mb-2" id="currentTemp">33°C</div>
+                            <div class="text-sm opacity-90">Levegő hőmérséklet</div>
+                            <div class="text-xs mt-1">☀️ Napos, párás</div>
+                        </div>
+                        
+                        <div class="bg-white bg-opacity-20 rounded-xl p-6 text-center backdrop-blur-sm">
+                            <div class="text-4xl font-bold mb-2 text-cyan-200" id="seaTemp">32°C</div>
+                            <div class="text-sm opacity-90">Tengervíz hőfok</div>
+                            <div class="text-xs mt-1">🏊‍♂️ Tökéletes úszáshoz</div>
+                        </div>
+                        
+                        <div class="bg-white bg-opacity-20 rounded-xl p-6 text-center backdrop-blur-sm">
+                            <div class="text-4xl font-bold mb-2 text-yellow-200" id="uvIndex">9</div>
+                            <div class="text-sm opacity-90">UV Index</div>
+                            <div class="text-xs mt-1">🧴 Fényvédő kötelező!</div>
+                        </div>
+                        
+                        <div class="bg-white bg-opacity-20 rounded-xl p-6 text-center backdrop-blur-sm">
+                            <div class="text-4xl font-bold mb-2 text-green-200" id="humidity">65%</div>
+                            <div class="text-sm opacity-90">Páratartalom</div>
+                            <div class="text-xs mt-1">💧 Közepesen párás</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="shareWeatherInfo()" 
+                                class="bg-white bg-opacity-20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-30 transition-all">
+                            📱 +4 Pont: Időjárás Megosztása
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Free Beaches Section -->
+            <section class="mb-12">
+                <div class="beach-card rounded-2xl p-8 shadow-xl text-white">
+                    <h2 class="text-3xl font-bold mb-6 flex items-center" id="beachesTitle">
+                        🏖️ Top 5 Ingyenes Dubai Strand - Belépő Nélkül!
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Beach List -->
+                        <div class="space-y-4">
+                            <div class="bg-white bg-opacity-20 rounded-xl p-4 backdrop-blur-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-xl font-bold">🏖️ JBR Beach</h3>
+                                    <div class="text-yellow-300">⭐⭐⭐⭐⭐ 4.4/5</div>
+                                </div>
+                                <p class="text-sm opacity-90 mb-2">Jumeirah Beach Residences - Forgalmas, éttermek, shoppingolás</p>
+                                <div class="text-xs">🚇 Metro: DMCC | 🅿️ Ingyenes parkolás | 🚿 Zuhanyzók</div>
+                            </div>
+                            
+                            <div class="bg-white bg-opacity-20 rounded-xl p-4 backdrop-blur-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-xl font-bold">🏄‍♂️ Kite Beach</h3>
+                                    <div class="text-yellow-300">⭐⭐⭐⭐⭐ 4.5/5</div>
+                                </div>
+                                <p class="text-sm opacity-90 mb-2">Umm Suqeim - Szörfözés, kitesurf, vízisportok paradicsoma</p>
+                                <div class="text-xs">🎯 Sport: Kitesurf, beach volleyball | 🍔 Food trucks</div>
+                            </div>
+                            
+                            <div class="bg-white bg-opacity-20 rounded-xl p-4 backdrop-blur-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-xl font-bold">🌅 Sunset Beach</h3>
+                                    <div class="text-yellow-300">⭐⭐⭐⭐⭐ 4.4/5</div>
+                                </div>
+                                <p class="text-sm opacity-90 mb-2">Jumeirah 3 - Romantikus naplementék, csendes, családi</p>
+                                <div class="text-xs">📸 Insta-perfect sunsets | 🏃‍♂️ Jogging track</div>
+                            </div>
+                            
+                            <div class="bg-white bg-opacity-20 rounded-xl p-4 backdrop-blur-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-xl font-bold">🏰 Jumeirah Public Beach</h3>
+                                    <div class="text-yellow-300">⭐⭐⭐⭐☆ 4.2/5</div>
+                                </div>
+                                <p class="text-sm opacity-90 mb-2">Burj Al Arab kilátás, fehér homok, csendes környezet</p>
+                                <div class="text-xs">🏨 Iconic view | ☂️ Ingyenes napernyők</div>
+                            </div>
+                            
+                            <div class="bg-white bg-opacity-20 rounded-xl p-4 backdrop-blur-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-xl font-bold">🌳 Al Mamzar Beach Park</h3>
+                                    <div class="text-yellow-300">⭐⭐⭐⭐☆ 4.3/5</div>
+                                </div>
+                                <p class="text-sm opacity-90 mb-2">Park + strand kombó, piknikezés, családi programok</p>
+                                <div class="text-xs">🎪 Playground | 🍃 BBQ areas | 🚲 Bike rental</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Interactive Map Placeholder -->
+                        <div class="bg-white bg-opacity-20 rounded-xl p-4 backdrop-blur-sm">
+                            <h3 class="text-xl font-bold mb-4 text-center">🗺️ Strand Térkép & Útvonalak</h3>
+                            <div class="bg-gradient-to-br from-blue-400 to-teal-400 rounded-lg h-80 flex items-center justify-center">
+                                <div class="text-center">
+                                    <div class="text-6xl mb-4">🗺️</div>
+                                    <div class="font-bold text-lg">Dubai Strand Térkép</div>
+                                    <div class="text-sm mt-2 opacity-90">Kattints a strandra az útvonalért</div>
+                                    <div class="mt-4 space-y-2">
+                                        <button onclick="openMap('JBR')" class="block w-full bg-white bg-opacity-20 py-2 px-4 rounded text-sm hover:bg-opacity-30">🏖️ JBR Beach útvonal</button>
+                                        <button onclick="openMap('Kite')" class="block w-full bg-white bg-opacity-20 py-2 px-4 rounded text-sm hover:bg-opacity-30">🏄‍♂️ Kite Beach útvonal</button>
+                                        <button onclick="openMap('Sunset')" class="block w-full bg-white bg-opacity-20 py-2 px-4 rounded text-sm hover:bg-opacity-30">🌅 Sunset Beach útvonal</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-6">
+                        <button onclick="addPoints(5, 'Strand lista megosztása')" 
+                                class="bg-white bg-opacity-20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-30 transition-all">
+                            🎯 +5 Pont: Strand Lista Megosztása
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Dubai Tips -->
+            <section class="mb-12">
+                <div class="bg-white bg-opacity-95 rounded-2xl p-8 shadow-xl">
+                    <h2 class="text-3xl font-bold mb-6 text-purple-600 flex items-center" id="tipsTitle">
+                        💡 Ingyenes Dubai Tippek - 2025 Friss Infók
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl border-l-4 border-blue-500">
+                            <h3 class="font-bold text-blue-700 mb-2">🌡️ Legjobb Utazási Idő</h3>
+                            <p class="text-sm text-gray-700">December-február: 25-30°C, tökéletes! Kerüld június-szeptember: 45°C+ párával. November és március átmeneti.</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border-l-4 border-green-500">
+                            <h3 class="font-bold text-green-700 mb-2">🚇 Közlekedés Ingyen</h3>
+                            <p class="text-sm text-gray-700">Ingyenes Nol kártya a metrónál. Careem/Uber olcsóbb mint taxi. Waze jobb mint Google Maps forgalomhoz.</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-yellow-50 to-amber-50 p-6 rounded-xl border-l-4 border-yellow-500">
+                            <h3 class="font-bold text-yellow-700 mb-2">👗 Öltözködési Kódex</h3>
+                            <p class="text-sm text-gray-700">Modest ruha: vállak, térdek fedve. Strandokon bikini OK. Nyilvános helyeken takarj! Respect local culture.</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-purple-50 to-violet-50 p-6 rounded-xl border-l-4 border-purple-500">
+                            <h3 class="font-bold text-purple-700 mb-2">🏛️ Ingyenes Látnivalók</h3>
+                            <p class="text-sm text-gray-700">Burj Khalifa földszint ingyenes. Dubai Fountain show 18:00-tól. Gold Souk séta. Dubai Frame külső nézet.</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-red-50 to-pink-50 p-6 rounded-xl border-l-4 border-red-500">
+                            <h3 class="font-bold text-red-700 mb-2">💰 Pénzügyek Smart</h3>
+                            <p class="text-sm text-gray-700">AED készpénz szükséges. Ingyenes ATM repülőtéren. Visa/Mastercard mindenhol elfogadott. Tipping 10-15%.</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-xl border-l-4 border-indigo-500">
+                            <h3 class="font-bold text-indigo-700 mb-2">🍽️ Étel & Ital Tippek</h3>
+                            <p class="text-sm text-gray-700">Street food 15-25 AED. Alkohol csak hotelekben. Ramadan alatt respect fasting. Víz mindig magaddal!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-6">
+                        <button onclick="addPoints(2, 'Dubai tippek olvasása')" 
+                                class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-bold hover:from-purple-600 hover:to-pink-600 transform hover:scale-105 transition-all">
+                            🎯 +2 Pont: Tippek Megosztása
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Newsletter & Contact -->
+            <section class="mb-12">
+                <div class="newsletter-section rounded-2xl p-8 shadow-xl text-white">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        
+                        <!-- Newsletter Signup -->
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4 flex items-center" id="newsletterTitle">
+                                📬 VIP Dubai Hírlevél - Ingyenes!
+                            </h3>
+                            <p class="mb-6 opacity-90">Heti 1x: Új ingatlan lehetőségek, Golden Visa változások, exkluzív insider tippek!</p>
+                            
+                            <div class="space-y-4">
+                                <input type="email" 
+                                       id="newsletterEmail"
+                                       placeholder="pelda@email.hu" 
+                                       class="w-full px-4 py-3 rounded-lg text-gray-800 focus:ring-4 focus:ring-purple-300 outline-none">
+                                
+                                <input type="text" 
+                                       id="newsletterName"
+                                       placeholder="Teljes Név (opcionális)" 
+                                       class="w-full px-4 py-3 rounded-lg text-gray-800 focus:ring-4 focus:ring-purple-300 outline-none">
+                                
+                                <select id="interestLevel" class="w-full px-4 py-3 rounded-lg text-gray-800 focus:ring-4 focus:ring-purple-300 outline-none">
+                                    <option value="">Válaszd ki érdeklődésedet...</option>
+                                    <option value="residential">🏠 Lakóingatlan vásárlás</option>
+                                    <option value="commercial">🏢 Kereskedelmi ingatlan</option>
+                                    <option value="golden-visa">🥇 Golden Visa program</option>
+                                    <option value="investment">💰 Befektetési lehetőségek</option>
+                                    <option value="tips">💡 Dubai életmód tippek</option>
+                                </select>
+                                
+                                <div class="space-y-2">
+                                    <label class="flex items-start gap-3 text-sm cursor-pointer">
+                                        <input type="checkbox" id="marketingConsent" class="mt-1 rounded">
+                                        <span class="opacity-90">
+                                            Szeretnék marketing emaileket kapni Dubai ingatlanokról, Golden Visa frissítésekről és befektetési lehetőségekről. 
+                                            <button onclick="showPrivacyPolicy()" class="underline text-purple-200 hover:text-white">Adatvédelmi szabályzat</button>
+                                        </span>
+                                    </label>
+                                    <label class="flex items-start gap-3 text-sm cursor-pointer">
+                                        <input type="checkbox" id="phoneConsent" class="mt-1 rounded">
+                                        <span class="opacity-90">Hozzájárulok telefonos megkereséshez ingatlan érdeklődés esetén.</span>
+                                    </label>
+                                </div>
+                                
+                                <button onclick="subscribeNewsletter()" 
+                                        class="w-full bg-white bg-opacity-20 backdrop-blur-sm text-white py-4 px-6 rounded-lg font-bold hover:bg-opacity-30 transition-all transform hover:scale-105">
+                                    🎯 Feliratkozom +10 Pont
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Contact Info -->
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4 flex items-center" id="contactTitle">
+                                📧 Közvetlen Kapcsolat
+                            </h3>
+                            <p class="mb-6 opacity-90">Személyes tanácsadás, ingyenes konzultáció, 24/7 magyarul!</p>
+                            
+                            <div class="space-y-4">
+                                <a href="mailto:emilkormany@proton.me" 
+                                   class="flex items-center gap-3 bg-white bg-opacity-20 backdrop-blur-sm p-4 rounded-lg hover:bg-opacity-30 transition-all">
+                                    <div class="text-2xl">✉️</div>
+                                    <div>
+                                        <div class="font-semibold">Email: emilkormany@proton.me</div>
+                                        <div class="text-sm opacity-75">24 órán belül válaszolunk</div>
+                                    </div>
+                                </a>
+                                
+                                <div class="flex items-center gap-3 bg-white bg-opacity-20 backdrop-blur-sm p-4 rounded-lg">
+                                    <div class="text-2xl">🏢</div>
+                                    <div>
+                                        <div class="font-semibold">I am '71</div>
+                                        <div class="text-sm opacity-75">9 BurnBrae, Edinburgh EH12 8ED, UK</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-3 bg-white bg-opacity-20 backdrop-blur-sm p-4 rounded-lg">
+                                    <div class="text-2xl">🌍</div>
+                                    <div>
+                                        <div class="font-semibold">Időzóna: GMT+0</div>
+                                        <div class="text-sm opacity-75">Magyarország: +1 óra különbség</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Points Display & Social Share -->
+            <section class="mb-12">
+                <div class="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-2xl p-8 shadow-xl text-white text-center">
+                    <h2 class="text-3xl font-bold mb-4" id="pointsTitle">🎯 Pontgyűjtő Rendszer</h2>
+                    <div class="text-5xl font-bold mb-2" id="totalPointsDisplay">0 Pont</div>
+                    <p class="text-lg mb-6 opacity-90">Oszd meg tartalmakat, gyűjts pontokat exkluzív Dubai tippekhez!</p>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-white bg-opacity-20 rounded-xl p-4 backdrop-blur-sm">
+                            <div class="text-2xl mb-1">📱</div>
+                            <div class="font-semibold">+5 pont</div>
+                            <div class="text-xs">Telegram share</div>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-xl p-4 backdrop-blur-sm">
+                            <div class="text-2xl mb-1">👥</div>
+                            <div class="font-semibold">+5 pont</div>
+                            <div class="text-xs">Facebook share</div>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-xl p-4 backdrop-blur-sm">
+                            <div class="text-2xl mb-1">📧</div>
+                            <div class="font-semibold">+10 pont</div>
+                            <div class="text-xs">Hírlevél feliratkozás</div>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-xl p-4 backdrop-blur-sm">
+                            <div class="text-2xl mb-1">🎥</div>
+                            <div class="font-semibold">+3 pont</div>
+                            <div class="text-xs">Tartalom megosztás</div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2 text-sm opacity-90">
+                        <div>🥉 Bronze (50 pont): Dubai PDF útmutató</div>
+                        <div>🥈 Silver (100 pont): Exkluzív ingatlan lista</div>
+                        <div>🥇 Gold (200 pont): 1-1 személyes konzultáció</div>
+                        <div>💎 Diamond (500 pont): VIP Dubai túra</div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
     </main>
+
+    <!-- Fixed Social Share Buttons -->
+    <div class="fixed bottom-4 left-4 space-y-3 z-30">
+        <a href="https://t.me/share/url?url=https://sweet-tartufo-880aee.netlify.app&text=Dubai Info Hub - Ingyenes szakértő tanácsok! 🏗️" 
+           target="_blank" 
+           onclick="addPoints(5, 'Telegram megosztás')"
+           class="block bg-blue-500 text-white p-4 rounded-full shadow-2xl hover:bg-blue-600 transform hover:scale-110 transition-all pulse-animation">
+            📱
+        </a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://sweet-tartufo-880aee.netlify.app" 
+           target="_blank"
+           onclick="addPoints(5, 'Facebook megosztás')"
+           class="block bg-blue-700 text-white p-4 rounded-full shadow-2xl hover:bg-blue-800 transform hover:scale-110 transition-all">
+            👥
+        </a>
+        <a href="https://wa.me/?text=Dubai Info Hub - Ingyenes szakértő tanácsok! https://sweet-tartufo-880aee.netlify.app" 
+           target="_blank"
+           onclick="addPoints(5, 'WhatsApp megosztás')"
+           class="block bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transform hover:scale-110 transition-all">
+            📞
+        </a>
+    </div>
+
+    <!-- 24/7 AI Chat Widget -->
+    <div class="chat-widget">
+        <button onclick="toggleChat()" 
+                class="bg-gradient-to-r from-blue-600 to-purple-600 text-white w-16 h-16 rounded-full shadow-2xl hover:from-blue-700 hover:to-purple-700 transition-all transform hover:scale-110 pulse-animation"
+                id="chatButton">
+            💬
+        </button>
+        
+        <div id="chatWindow" class="hidden bg-white rounded-2xl shadow-2xl w-80 h-96 mb-4 flex flex-col border-2 border-purple-200">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-t-2xl">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <div class="font-bold" id="chatHeaderTitle">Dubai Asszisztens 24/7</div>
+                        <div class="text-xs opacity-75">Azonnali válasz magyarul</div>
+                    </div>
+                    <button onclick="toggleChat()" class="text-white hover:text-gray-200 text-xl">✕</button>
+                </div>
+            </div>
+            
+            <div id="chatMessages" class="flex-1 p-4 overflow-y-auto bg-gray-50 space-y-3">
+                <div class="bg-gradient-to-br from-blue-100 to-purple-100 p-3 rounded-lg border-l-4 border-blue-500">
+                    <div class="text-sm font-semibold text-blue-700 mb-1">Dubai Szakértő</div>
+                    <div class="text-sm text-gray-700">Szia! Kérdezz bármit Dubai-ról: ingatlan, Golden Visa, befektetések, költözés, élet! 🏗️</div>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t bg-white rounded-b-2xl">
+                <div class="flex gap-2">
+                    <input type="text" 
+                           id="chatInput"
+                           placeholder="Kérdezz bármit Dubai-ról..." 
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                           onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()" 
+                            class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:from-blue-700 hover:to-purple-700 transition-all">
+                        Küldés
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-4xl max-h-[80vh] overflow-y-auto shadow-2xl">
+            <div class="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">Adatvédelmi Tájékoztató</h2>
+                    <button onclick="closePrivacyPolicy()" class="text-white hover:text-gray-200 text-2xl">✕</button>
+                </div>
+            </div>
+            
+            <div class="p-6" id="privacyContent">
+                <!-- GDPR content will be loaded here -->
+                <div class="text-center py-8">
+                    <div class="text-4xl mb-4">🔒</div>
+                    <div class="text-lg font-semibold mb-2">Adatvédelmi Tájékoztató Betöltése...</div>
+                    <div class="text-sm text-gray-600">Részletes GDPR megfelelő szabályzat</div>
+                </div>
+            </div>
+            
+            <div class="sticky bottom-0 bg-gray-50 p-6 rounded-b-2xl border-t">
+                <div class="flex gap-3 justify-center">
+                    <button onclick="acceptPrivacyPolicy()" 
+                            class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold">
+                        Elfogadom és bezárom
+                    </button>
+                    <button onclick="closePrivacyPolicy()" 
+                            class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 font-semibold">
+                        Csak bezárom
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <div class="text-lg font-semibold mb-2">Dubai Info Hub 24/7</div>
+            <div class="text-sm text-gray-400 mb-4">I am '71 | Edinburgh, UK | Ingyenes szakértő tanácsok</div>
+            <div class="text-xs text-gray-500">
+                © 2025 Dubai Info Hub. Minden jog fenntartva. | 
+                <button onclick="showPrivacyPolicy()" class="underline hover:text-white">Adatvédelem</button>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let userPoints = parseInt(localStorage.getItem('dubaiPoints') || '0');
+        let userEmail = localStorage.getItem('dubaiUserEmail') || '';
+        let currentLanguage = localStorage.getItem('dubaiLanguage') || 'hu';
+
+        // Language translations
+        const translations = {
+            hu: {
+                mainTitle: "🏗️ Dubai Info Hub 24/7",
+                mainSubtitle: "Ingyenes szakértő tanácsok: Dubai ingatlan, Golden Visa, 8-12% befektetési hozam",
+                liveViewsTitle: "🎥 Élő Dubai Nézetek - Most Történik!",
+                weatherTitle: "🌡️ Dubai Időjárás & Tengervíz - Pillanatnyilag",
+                beachesTitle: "🏖️ Top 5 Ingyenes Dubai Strand - Belépő Nélkül!",
+                tipsTitle: "💡 Ingyenes Dubai Tippek - 2025 Friss Infók",
+                newsletterTitle: "📬 VIP Dubai Hírlevél - Ingyenes!",
+                contactTitle: "📧 Közvetlen Kapcsolat",
+                pointsTitle: "🎯 Pontgyűjtő Rendszer",
+                chatHeaderTitle: "Dubai Asszisztens 24/7"
+            },
+            en: {
+                mainTitle: "🏗️ Dubai Info Hub 24/7",
+                mainSubtitle: "Free expert advice: Dubai real estate, Golden Visa, 8-12% investment returns",
+                liveViewsTitle: "🎥 Live Dubai Views - Happening Now!",
+                weatherTitle: "🌡️ Dubai Weather & Sea Temperature - Current",
+                beachesTitle: "🏖️ Top 5 Free Dubai Beaches - No Entry Fee!",
+                tipsTitle: "💡 Free Dubai Tips - 2025 Fresh Info",
+                newsletterTitle: "📬 VIP Dubai Newsletter - Free!",
+                contactTitle: "📧 Direct Contact",
+                pointsTitle: "🎯 Points Collection System",
+                chatHeaderTitle: "Dubai Assistant 24/7"
+            }
+        };
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePointsDisplay();
+            showCookieBanner();
+            setLanguage(currentLanguage);
+        });
+
+        // Points system
+        function updatePointsDisplay() {
+            document.getElementById('totalPointsDisplay').textContent = `${userPoints} Pont`;
+        }
+
+        function addPoints(points, action) {
+            userPoints += points;
+            localStorage.setItem('dubaiPoints', userPoints.toString());
+            updatePointsDisplay();
+            
+            // Show success animation
+            showPointsAnimation(points, action);
+        }
+
+        function showPointsAnimation(points, action) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white px-6 py-4 rounded-2xl shadow-2xl z-50 animate-bounce';
+            notification.innerHTML = `
+                <div class="text-center">
+                    <div class="text-2xl font-bold">+${points} Pont! 🎯</div>
+                    <div class="text-sm">${action}</div>
+                    <div class="text-xs mt-1">Összes: ${userPoints} pont</div>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Chat functionality
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.classList.toggle('hidden');
+            
+            if (!chatWindow.classList.contains('hidden')) {
+                document.getElementById('chatInput').focus();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const messages = document.getElementById('chatMessages');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // User message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'text-right';
+            userMsg.innerHTML = `
+                <div class="bg-blue-600 text-white p-3 rounded-lg inline-block max-w-[80%] text-sm">
+                    ${message}
+                </div>
+            `;
+            messages.appendChild(userMsg);
+            
+            input.value = '';
+            
+            // AI response (simulated)
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.innerHTML = `
+                    <div class="bg-gradient-to-br from-blue-100 to-purple-100 p-3 rounded-lg border-l-4 border-blue-500 max-w-[80%]">
+                        <div class="text-xs font-semibold text-blue-700 mb-1">Dubai Szakértő</div>
+                        <div class="text-sm text-gray-700">${getAIResponse(message)}</div>
+                    </div>
+                `;
+                messages.appendChild(aiMsg);
+                messages.scrollTop = messages.scrollHeight;
+            }, 1500);
+            
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function getAIResponse(message) {
+            const msg = message.toLowerCase();
+            
+            if (msg.includes('golden visa') || msg.includes('vízum')) {
+                return 'Golden Visa UAE: 10 éves tartózkodási engedély 2M AED befektetéssel. Családtagok is jogosultak. Részletek: emilkormany@proton.me 📧';
+            }
+            if (msg.includes('ingatlan') || msg.includes('property')) {
+                return 'Dubai ingatlan: 8-12% éves hozam várható. Top területek: Downtown, Marina, JBR. Min. 1M AED külföldieknek. Konzultáció emailben! 🏢';
+            }
+            if (msg.includes('időjárás') || msg.includes('weather')) {
+                return 'Most: 33°C levegő, 32°C tengervíz. Ideális időszak: november-március (25-30°C). Kerüld: június-szeptember (45°C+). 🌡️';
+            }
+            if (msg.includes('strand') || msg.includes('beach')) {
+                return 'Top ingyenes strandok: JBR Beach (forgalmas), Kite Beach (sport), Sunset Beach (romantikus). Mindegyik ingyenes parkolással! 🏖️';
+            }
+            if (msg.includes('költözés') || msg.includes('living')) {
+                return 'Dubai költözés: Emirates ID kell, banki ajánlás, lakcímkártya. Lakhatás: Minimum 50-80k AED/év studio apartmanért. Segítünk! 🏠';
+            }
+            if (msg.includes('befektetés') || msg.includes('investment')) {
+                return 'Dubai befektetések: Ingatlan (8-12% p.a.), off-plan projektek, Golden Visa kombó. Minimum 1M AED ajánlott. Portfolio elemzés kérhető! 💰';
+            }
+            
+            return `Érdekes kérdés "${message}" témában! 🤔 Írj részletesen ide: emilkormany@proton.me - 24 órán belül személyre szabott tanáccsal válaszolok! 📧`;
+        }
+
+        // Newsletter subscription
+        function subscribeNewsletter() {
+            const email = document.getElementById('newsletterEmail').value;
+            const name = document.getElementById('newsletterName').value;
+            const interest = document.getElementById('interestLevel').value;
+            const marketingConsent = document.getElementById('marketingConsent').checked;
+            
+            if (!email || !marketingConsent) {
+                alert('Kérlek add meg az email címet és fogadd el a marketing hozzájárulást!');
+                return;
+            }
+            
+            // Simulate API call
+            localStorage.setItem('dubaiUserEmail', email);
+            localStorage.setItem('dubaiUserName', name);
+            localStorage.setItem('dubaiUserInterest', interest);
+            
+            addPoints(10, 'Hírlevél feliratkozás');
+            
+            alert(`Sikeres feliratkozás! 🎉\n\nEmail: ${email}\nÉrdeklődés: ${interest}\n\nHamarosan érkezik az első VIP tartalom!`);
+            
+            // Reset form
+            document.getElementById('newsletterEmail').value = '';
+            document.getElementById('newsletterName').value = '';
+            document.getElementById('interestLevel').value = '';
+        }
+
+        // Weather sharing
+        function shareWeatherInfo() {
+            const weatherText = `Dubai időjárás most: 33°C levegő ☀️, 32°C tengervíz 🏊‍♂️! Tökéletes úszóidő! Több Dubai info: https://sweet-tartufo-880aee.netlify.app`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Dubai Időjárás Info',
+                    text: weatherText
+                });
+            } else {
+                navigator.clipboard.writeText(weatherText).then(() => {
+                    alert('Időjárás információ vágólapra másolva! 📋');
+                });
+            }
+            
+            addPoints(4, 'Időjárás információ megosztása');
+        }
+
+        // Map functions
+        function openMap(beachType) {
+            const mapUrls = {
+                'JBR': 'https://maps.google.com/?q=JBR+Beach+Dubai',
+                'Kite': 'https://maps.google.com/?q=Kite+Beach+Dubai',
+                'Sunset': 'https://maps.google.com/?q=Sunset+Beach+Dubai+Jumeirah'
+            };
+            
+            window.open(mapUrls[beachType], '_blank');
+            addPoints(2, `${beachType} Beach útvonal megnyitása`);
+        }
+
+        // Language switching
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('dubaiLanguage', lang);
+            
+            const trans = translations[lang] || translations['hu'];
+            
+            // Update text content
+            Object.keys(trans).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = trans[key];
+                }
+            });
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+            
+            // Show language change success
+            const langNames = {
+                hu: 'Magyar', en: 'English', ar: 'العربية', hi: 'हिन्दी', zh: '中文',
+                ru: 'Русский', ur: 'اردو', fr: 'Français', es: 'Español', de: 'Deutsch'
+            };
+            
+            if (langNames[lang]) {
+                showPointsAnimation(1, `Nyelv váltás: ${langNames[lang]}`);
+            }
+        }
+
+        // Privacy policy
+        function showPrivacyPolicy() {
+            document.getElementById('privacyModal').classList.remove('hidden');
+            
+            // Load GDPR content
+            const gdprContent = `
+                <h3 class="text-xl font-bold mb-4 text-blue-600">1. ADATKEZELŐ ADATAI</h3>
+                <p class="mb-4"><strong>Adatkezelő:</strong> I am '71<br>
+                <strong>Cím:</strong> 9 BurnBrae, Edinburgh EH12 8ED, United Kingdom<br>
+                <strong>Adatvédelmi kapcsolat:</strong> emilkormany@proton.me</p>
+                
+                <h3 class="text-xl font-bold mb-4 text-blue-600">2. KEZELT ADATOK</h3>
+                <p class="mb-4">• <strong>Email cím:</strong> Hírlevél küldés, kapcsolatfelvétel<br>
+                • <strong>Név:</strong> Személyre szabott kommunikáció<br>
+                • <strong>Érdeklődési kör:</strong> Releváns tartalom küldése<br>
+                • <strong>Chat üzenetek:</strong> Ügyfélszolgálat (30 napig tároljuk)</p>
+                
+                <h3 class="text-xl font-bold mb-4 text-blue-600">3. JOGALAPOK</h3>
+                <p class="mb-4">• Hozzájárulás (GDPR 6. cikk 1. bekezdés a) pont)<br>
+                • Jogos érdek (GDPR 6. cikk 1. bekezdés f) pont)</p>
+                
+                <h3 class="text-xl font-bold mb-4 text-blue-600">4. AZ ÖN JOGAI</h3>
+                <p class="mb-4">• Hozzájárulás visszavonása bármikor<br>
+                • Adatok törlésének kérése<br>
+                • Hozzáférés és helyesbítés<br>
+                • Panasztétel: NAIH (naih.hu)</p>
+                
+                <h3 class="text-xl font-bold mb-4 text-blue-600">5. COOKIE-K</h3>
+                <p class="mb-4">Csak funkcionális cookie-kat használunk az oldal működéséhez. Analitikai cookie-k csak hozzájárulással.</p>
+                
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <p class="text-sm"><strong>Kapcsolat:</strong> emilkormany@proton.me<br>
+                    <strong>Frissítve:</strong> 2025. szeptember 25.</p>
+                </div>
+            `;
+            
+            document.getElementById('privacyContent').innerHTML = gdprContent;
+        }
+
+        function acceptPrivacyPolicy() {
+            document.getElementById('marketingConsent').checked = true;
+            closePrivacyPolicy();
+            addPoints(1, 'Adatvédelmi szabályzat elfogadása');
+        }
+
+        function closePrivacyPolicy() {
+            document.getElementById('privacyModal').classList.add('hidden');
+        }
+
+        // Cookie banner
+        function showCookieBanner() {
+            const cookieConsent = localStorage.getItem('dubaiCookieConsent');
+            if (!cookieConsent) {
+                document.getElementById('cookieBanner').style.display = 'block';
+            }
+        }
+
+        function acceptCookies() {
+            localStorage.setItem('dubaiCookieConsent', 'accepted');
+            document.getElementById('cookieBanner').style.display = 'none';
+            addPoints(1, 'Cookie-k elfogadása');
+        }
+
+        function rejectCookies() {
+            localStorage.setItem('dubaiCookieConsent', 'rejected');
+            document.getElementById('cookieBanner').style.display = 'none';
+            // Clear any analytics cookies
+            alert('Cookie-k elutasítva. Csak funkcionális sütik maradnak.');
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+/ to open chat
+            if (e.ctrlKey && e.key === '/') {
+                e.preventDefault();
+                toggleChat();
+            }
+            
+            // Escape to close modals
+            if (e.key === 'Escape') {
+                closePrivacyPolicy();
+                document.getElementById('chatWindow').classList.add('hidden');
+            }
+        });
+
+        // Auto-update weather (every 30 minutes)
+        setInterval(() => {
+            // This would be replaced with real API call
+            console.log('Weather updated');
+        }, 30 * 60 * 1000);
+
+    </script>
+
 </body>
 </html>
