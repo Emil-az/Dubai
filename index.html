@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dubai Info Hub 24/7</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e40af 0%, #f59e0b 50%, #dc2626 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="font-sans">
+
+    <!-- Üdvözlő képernyő -->
+    <div id="welcome" class="fixed inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-yellow-500 flex items-center justify-center z-50">
+        <div class="text-center text-white px-4">
+            <h1 class="text-6xl md:text-8xl font-bold mb-6 animate-pulse">Dubai Info Hub</h1>
+            <p class="text-2xl md:text-3xl mb-4">Ingyenes szakértő tanácsok magyaroknak</p>
+            <p class="text-xl mb-12 opacity-90">Golden Visa • Ingatlanok • 8-12% hozam</p>
+            <button onclick="enterSite()" class="bg-white text-blue-600 px-12 py-4 rounded-full text-2xl font-bold hover:bg-gray-100 transition-all">
+                Belépés →
+            </button>
+        </div>
+    </div>
+
+    <!-- Nyelvválasztó gomb -->
+    <button id="langBtn" onclick="toggleLang()" class="fixed top-4 right-4 z-40 bg-blue-600 text-white rounded-full px-4 py-3 shadow-lg">
+        🌐 <span id="currentLang">HU</span>
+    </button>
+    
+    <!-- Nyelv menü -->
+    <div id="langMenu" class="hidden fixed top-16 right-4 z-30 bg-white rounded-xl p-4 shadow-xl">
+        <div class="grid grid-cols-4 gap-2">
+            <button onclick="setLang('hu')" class="p-2 hover:bg-blue-100 rounded">🇭🇺</button>
+            <button onclick="setLang('en')" class="p-2 hover:bg-blue-100 rounded">🇬🇧</button>
+            <button onclick="setLang('de')" class="p-2 hover:bg-blue-100 rounded">🇩🇪</button>
+            <button onclick="setLang('fr')" class="p-2 hover:bg-blue-100 rounded">🇫🇷</button>
+        </div>
+    </div>
+
+    <!-- Fő tartalom -->
+    <main id="mainContent" class="hidden container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- Header -->
+            <header class="bg-white rounded-2xl p-8 shadow-xl mb-8 text-center">
+                <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-yellow-600 bg-clip-text text-transparent">
+                    Dubai Info Hub 24/7
+                </h1>
+                <p class="text-xl text-gray-700">Ingyenes szakértő tanácsok: Dubai ingatlan, Golden Visa, 8-12% hozam</p>
+            </header>
+
+            <!-- Placeholder tartalomhoz -->
+            <div class="bg-white rounded-2xl p-8 shadow-xl">
+                <h2 class="text-2xl font-bold mb-4">Üdvözöljük!</h2>
+                <p class="text-gray-700">Az oldal tartalma hamarosan érkezik...</p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Belépés az oldalra
+        function enterSite() {
+            document.getElementById('welcome').style.display = 'none';
+            document.getElementById('mainContent').classList.remove('hidden');
+        }
+
+        // Nyelvválasztó toggle
+        function toggleLang() {
+            document.getElementById('langMenu').classList.toggle('hidden');
+        }
+
+        // Nyelv beállítás
+        function setLang(lang) {
+            document.getElementById('currentLang').textContent = lang.toUpperCase();
+            document.getElementById('langMenu').classList.add('hidden');
+        }
+    </script>
+
+</body>
+</html>
